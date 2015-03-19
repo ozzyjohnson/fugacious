@@ -19,6 +19,10 @@ OptionParser.new do |opts|
   help_msg = 'Number of views until message is destroyed'
   opts.on('-v', '--views NUMBER_OF_VIEWS', Integer, help_msg) { |v| options[:max_views] = v}
 
+  # assure that host is set to an URI type
+  help_msg = 'Fugacious host where the message will be created'
+  opts.on('-f', '--fugacious FUGACIOUS_HOST', URI::regexp, help_msg) { |f| options[:fugacious_host] = f}
+
   opts.on('-h', '--help', 'Prints this help') { puts opts; exit }
 
   # set body param
@@ -40,6 +44,11 @@ json_headers = {'Content-Type' => 'application/json',
                 'Accept' => 'application/json'}
 # set URI
 uri = URI('https://fugacio.us/m')
+
+# if an alternate fugacious_host is specified, use that.
+if options['fugacious_host']
+  uri = URI(options['fugacious_host'][0] + '/m')
+end
 
 # create new HTTP connection
 http = Net::HTTP.new(uri.host, uri.port)
